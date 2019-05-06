@@ -19,7 +19,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
 
             agent.updateRotation = false;
             agent.updatePosition = true;
-            Array.Sort (targets, CompareTransform);
+            Array.Sort(targets, CompareTransform);
             // Array.Sort(targets, delegate(Transform node1, Transform node2) {
             //     return node1.Name[]
             // });
@@ -49,9 +49,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
         }
 
         private static int CompareTransform (Transform A, Transform B) {
-            int a = Int32.Parse (A.name.Remove (8));
-            int b = Int32.Parse (B.name.Remove (8));
-            return a - b;
+            return A.name.CompareTo(B.name);
         }
     }
 }
