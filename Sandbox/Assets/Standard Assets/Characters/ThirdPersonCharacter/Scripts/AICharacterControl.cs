@@ -11,6 +11,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
         public Transform[] targets;
         public int current; // target to aim for
         public bool racing = false;
+        public int laps;
 
         private void Start () {
             // get the components on the object we need ( should not be null due to require component so no need to check )
@@ -19,26 +20,35 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
 
             agent.updateRotation = false;
             agent.updatePosition = true;
-            Array.Sort(targets, CompareTransform);
+            Array.Sort (targets, CompareTransform);
             // Array.Sort(targets, delegate(Transform node1, Transform node2) {
             //     return node1.Name[]
             // });
         }
 
         private void Update () {
-            if (racing) {
-                if (target != null) {
-                    Vector3 leveledPos = target.position;
-                    leveledPos.y = character.transform.position.y;
-                    agent.SetDestination (leveledPos);
-                }
-                if (agent.remainingDistance > agent.stoppingDistance) {
-                    character.Move (agent.desiredVelocity, false, false);
-                } else {
-                    current++;
-                    current %= targets.Length;
-                    target = targets[current];
-                    agent.SetDestination (target.position);
+
+            if (target != null) {
+                Vector3 leveledPos = target.position;
+                leveledPos.y = character.transform.position.y;
+                agent.SetDestination (leveledPos);
+            }
+            if (agent.remainingDistance > agent.stoppingDistance) {
+                character.Move (agent.desiredVelocity, false, false);
+            } else {
+                if (racing) {
+                    if (current == targets.Length - 1) {
+                        laps--;
+                    }
+                    if (laps == 0) {
+                        racing = false;
+                    } else {
+                        current++;
+                        current %= targets.Length;
+                        target = targets[current];
+                        agent.SetDestination (target.position);
+                    }
+
                 }
             }
 
@@ -49,7 +59,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
         }
 
         private static int CompareTransform (Transform A, Transform B) {
-            return A.name.CompareTo(B.name);
+            return A.name.CompareTo (B.name);
         }
     }
 }
