@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace UnityStandardAssets.Characters.ThirdPerson {
@@ -12,7 +13,9 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
         public int current; // target to aim for
         public bool racing = false;
         public int laps;
+        private int place = -1;
         private float normalSpeed;
+        private System.Random rand;
         private void Start () {
             // get the components on the object we need ( should not be null due to require component so no need to check )
             agent = GetComponentInChildren<UnityEngine.AI.NavMeshAgent> ();
@@ -25,15 +28,11 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
             //     return node1.Name[]
             // });
             normalSpeed = agent.speed;
+            rand = new System.Random ();
         }
 
         private void Update () {
             if (racing) {
-                if (target != null) {
-                    Vector3 leveledPos = target.position;
-                    leveledPos.y = character.transform.position.y;
-                    agent.SetDestination (leveledPos);
-                }
                 if (agent.remainingDistance > agent.stoppingDistance) {
                     character.Move (agent.desiredVelocity, false, false);
                 } else {
@@ -48,7 +47,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
                         current %= targets.Length;
 
                         if (current % 3 == 0) {
-                            System.Random rand = new System.Random ();
+                            
                             int delta = (rand.Next (15, 25) - 15) / 5;
                             agent.speed += 3.0f * delta;
 
@@ -60,10 +59,18 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
                             agent.speed += barnfactor * 2;
                         }
                         target = targets[current];
+                        Vector3 leveledPos = target.position;
+                        leveledPos.x = leveledPos.x + rand.Next (0, 10) - 5;
+                        leveledPos.z = leveledPos.z + rand.Next (0, 10) - 5;
                         agent.SetDestination (target.position);
                     }
 
                 }
+            } else {
+                agent.SetDestination(getFinalDestination(place));
+                if (agent.remainingDistance > agent.stoppingDistance) {
+                    character.Move (agent.desiredVelocity, false, false);
+                } 
             }
 
         }
@@ -82,6 +89,15 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
 
         public void stopRunning () {
             racing = false;
+        }
+
+        public void setPlace (int finish) {
+            place = finish;
+            Task.Delay (250).ContinueWith (t => racing = false);
+        }
+
+        private Vector3 getFinalDestination(int place) {
+            return GameObject.Find("Podium" + place % 10).GetComponent<Transform>().position;
         }
     }
 }
