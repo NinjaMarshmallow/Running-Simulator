@@ -12,7 +12,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
         public int current; // target to aim for
         public bool racing = false;
         public int laps;
-
+        private float normalSpeed;
         private void Start () {
             // get the components on the object we need ( should not be null due to require component so no need to check )
             agent = GetComponentInChildren<UnityEngine.AI.NavMeshAgent> ();
@@ -24,6 +24,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
             // Array.Sort(targets, delegate(Transform node1, Transform node2) {
             //     return node1.Name[]
             // });
+            normalSpeed = agent.speed;
         }
 
         private void Update () {
@@ -45,6 +46,19 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
                     } else {
                         current++;
                         current %= targets.Length;
+                        
+                        if(current % 3 == 0) {
+                            System.Random rand = new System.Random();
+                            int delta = (rand.Next(15, 25) - 15)/5;
+                            agent.speed += 3.0f * delta;
+                            
+                        } else {
+                            agent.speed = normalSpeed;
+                        }
+                        float barnfactor = current / (targets.Length / 2);
+                        if(barnfactor > 1) {
+                            agent.speed += barnfactor * 2;
+                        }
                         target = targets[current];
                         agent.SetDestination (target.position);
                     }

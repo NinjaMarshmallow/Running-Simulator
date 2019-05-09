@@ -30,17 +30,16 @@ namespace UnityStandardAssets.Utility
         {
             time++;   
             if(time % 60 == 0) {
-                text.text += "L";
                 changeText();
             }
         }
 
         private void changeText() {
-            if(text.text == "3") {
+            if(text.text.Equals("3")) {
                 text.text = "2";
-            } else if(text.text == "2") {
+            } else if(text.text.Equals("2")) {
                 text.text = "1";
-            } else if(text.text == "1") {
+            } else if(text.text.Equals("1")) {
                 text.text = "Go!";
             } else {
                 text.text = "";
