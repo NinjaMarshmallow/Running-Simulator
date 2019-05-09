@@ -28,16 +28,16 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
         }
 
         private void Update () {
+            if (racing) {
+                if (target != null) {
+                    Vector3 leveledPos = target.position;
+                    leveledPos.y = character.transform.position.y;
+                    agent.SetDestination (leveledPos);
+                }
+                if (agent.remainingDistance > agent.stoppingDistance) {
+                    character.Move (agent.desiredVelocity, false, false);
+                } else {
 
-            if (target != null) {
-                Vector3 leveledPos = target.position;
-                leveledPos.y = character.transform.position.y;
-                agent.SetDestination (leveledPos);
-            }
-            if (agent.remainingDistance > agent.stoppingDistance) {
-                character.Move (agent.desiredVelocity, false, false);
-            } else {
-                if (racing) {
                     if (current == targets.Length - 1) {
                         laps--;
                     }
@@ -46,17 +46,17 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
                     } else {
                         current++;
                         current %= targets.Length;
-                        
-                        if(current % 3 == 0) {
-                            System.Random rand = new System.Random();
-                            int delta = (rand.Next(15, 25) - 15)/5;
+
+                        if (current % 3 == 0) {
+                            System.Random rand = new System.Random ();
+                            int delta = (rand.Next (15, 25) - 15) / 5;
                             agent.speed += 3.0f * delta;
-                            
+
                         } else {
                             agent.speed = normalSpeed;
                         }
                         float barnfactor = current / (targets.Length / 2);
-                        if(barnfactor > 1) {
+                        if (barnfactor > 1) {
                             agent.speed += barnfactor * 2;
                         }
                         target = targets[current];
@@ -74,6 +74,14 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
 
         private static int CompareTransform (Transform A, Transform B) {
             return A.name.CompareTo (B.name);
+        }
+
+        public void startRunning () {
+            racing = true;
+        }
+
+        public void stopRunning () {
+            racing = false;
         }
     }
 }
