@@ -12,7 +12,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
         public float speed = 10.0F;
         public float jumpSpeed = 8.0F;
         public float gravity = 20.0F;
-        public float rotateSpeed = 10.0F;
+        public float rotateSpeed = 20.0F;
         private Vector3 moveDirection = Vector3.zero;
 
         public int MaxEnergy;
@@ -65,7 +65,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
                     KickLength--;
                 }
                 CharacterController controller = GetComponent<CharacterController> ();
-                Vector3 moveDirection = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));
+                Vector3 moveDirection = new Vector3 (0, 0, Input.GetAxis ("Vertical"));
                 moveDirection.y -= gravity * Time.deltaTime;
                 moveDirection = transform.TransformDirection (moveDirection);
                 moveDirection *= speed;
